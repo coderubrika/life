@@ -1,71 +1,104 @@
 import './styles.scss';
 import { v4 as uuidv4 } from 'uuid'
 
-import { Vector2 } from './Engine/Math/Vector2'
 import { Angle } from './Engine/Math/Angle'
 import { Entity } from './Engine/Entity';
 import { Component } from './Engine/Component';
 import { Transform2D } from './Engine/Transform2D';
-
-
-
+import Color from 'color'
+import _ from 'lodash'
+import { Cycle } from './Engine/Components/Cycle';
+import { Renderer } from './Engine/Components/Renderer';
+import { Vector2 } from './Engine/Math/Vector2';
+import { Mover } from './App/Components/Mover';
+import { Time } from './Engine/DeltaTime';
+import { Rotator } from './App/Components/Rotator';
+import { Ngon } from './Engine/Components/Ngon';
 
 Entity.init()
+Time.init()
 
-const entity1 :Entity = new Entity()
-const entity2 :Entity = new Entity()
-const entity3 :Entity = new Entity()
-const entity4 :Entity = new Entity()
-const entity5 :Entity = new Entity()
-const entity6 :Entity = new Entity()
+const $buttonStart = document.querySelector('button#start') 
+const $buttonStop = document.querySelector('button#stop')
+const $canvas: HTMLCanvasElement = document.querySelector('canvas#canvas')
+let context: CanvasRenderingContext2D;
+
 
 function initEntities(entities: Entity[]) {
+
+    context = $canvas.getContext('2d')
+
+    context.strokeStyle = '#ffffff'
+    context.fillStyle = '#15122b'
+
     entities.forEach (entity => {
-        entity.AddComponent(new Transform2D())
+        entity.AddComponent(new Transform2D ( new Vector2(_.random(0, 1000),_.random(0, 500)), new Angle(90)))
+
+        const count = _.random(3, 8);
+
+        for (let i = 0; i < count; i++) {
+            entity.AddComponent(new Ngon(_.random(3, 20), _.random(3, 8)))    
+        }
+
+        entity.AddComponent(new Renderer(context)),
+        entity.AddComponent(new Mover()),
+        entity.AddComponent(new Rotator())
+        
     })
 }
 
-const items = [
-    entity1,
-    entity2,
-    entity3,
-    entity4,
-    entity5,
-    entity6,
-]
+const items: Entity[] = []
+
+for (let i = 0; i < 50; i++) {
+    items.push(new Entity())
+}
 
 initEntities(items)
 
-const FPS = 60
+const FPS = 240
 
 const deltaTime = 1000 / FPS
 
 
 function tick() {
-
-    // здесь нужно предусмотреть древовидную структуру позиций и знать что у всех есть свой трансформ
+    Time.tickQuery()
+    context.fillRect(0, 0, 2000, 2000)
 
     items.forEach(item => {
-        const components = item.GetComponents()
+        const components = item.GetComponents(Object)
 
-        for (let componentId in components) {
+        for (const componentId in components) {
             components[componentId].update()
+        }
+    })
+
+    items.forEach(item => {
+        const components = item.GetComponents(Object)
+
+        for (const componentId in components) {
+            components[componentId].render()
         }
     })
 }
 
 let timerId: NodeJS.Timer = null;
 
-const $buttonStart = document.querySelector('button#start') 
-const $buttonStop = document.querySelector('button#stop')
-
 $buttonStart.addEventListener('click', ()=> {
+    items.forEach(item => {
+        const components = item.GetComponents(Object)
+
+        for (const componentId in components) {
+            components[componentId].start()
+        }
+    })
+
     timerId = setInterval(tick, deltaTime)
 })
 
 $buttonStop.addEventListener('click', ()=> {
     if (timerId) {
         clearInterval(timerId)
+        context.clearRect(0, 0, 2000, 2000)
     }
     
 })

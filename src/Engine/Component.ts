@@ -12,8 +12,16 @@ export abstract class Component {
 
     public readonly id: string
     
-    public abstract update(): void
+    public update() {
 
+    }
+
+    public start() {
+        
+    }
+    public render() {
+        
+    }
     constructor() {
         this.id = uuidv4()
     }

@@ -7,6 +7,22 @@ export class Vector2 {
         this.y = y || 0
     }
 
+    public sum(vector2: Vector2) {
+        return new Vector2(this.x + vector2.x, this.y + vector2.y)
+    }
+
+    public dif(vector2: Vector2) {
+        return new Vector2(vector2.x - this.x, vector2.y - this.y)
+    }
+
+    public scale(factor: number) {
+        return new Vector2(this.x * factor, this.y * factor)
+    }
+
+    public dot(vector2: Vector2) {
+        return new Vector2(this.x * vector2.x, this.y * vector2.y)
+    }
+
     public static copy(vector: Vector2) {
         return new Vector2(vector.x, vector.y)
     }

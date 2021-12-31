@@ -10,14 +10,32 @@ export class Entity {
 
     constructor(name?: string) {
         this.name = name || 'Entity_' + Entity.entityId.toString()
+        this.components = {}
     }
 
     public static init() {
         Entity.entityId = 0
     }
 
-    public GetComponents(): Components {
-        return this.components
+    public GetComponents(Type: any): any[] {
+        const components:  any[] = []
+
+        for (const componentId in this.components) {
+            if (this.components[componentId] instanceof Type) {
+                components.push(this.components[componentId])
+            }
+        }
+
+        return components
+    }
+
+    public GetComponent(Type: any): any {
+        for (const componentId in this.components) {
+            if (this.components[componentId] instanceof Type) {
+                return this.components[componentId]
+            }
+        }
+        return null
     }
 
     public AddComponent(component: Component) {
