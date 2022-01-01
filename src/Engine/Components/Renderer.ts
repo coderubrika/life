@@ -25,7 +25,7 @@ export class Renderer extends Component {
             realPath.push(new Vector2(x, y))
         }
 
-        let positionStart: Vector2 = centerPosition.sum(realPath[0])
+        const positionStart: Vector2 = centerPosition.sum(realPath[0])
 
         this.context.moveTo(positionStart.x, positionStart.y)
         

@@ -10,7 +10,7 @@ export class Rotator extends Component {
 
     public override start() {
         this.transform = this.entity.GetComponent(Transform2D)
-        this.speed =  _.random(1,10)
+        this.speed =  _.random(-3,3, true)
     }
 
     public override update() {

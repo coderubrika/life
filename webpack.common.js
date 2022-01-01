@@ -7,8 +7,22 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
 
+const pages = [
+  'index',
+  'Inspector',
+  'Hierarchy'
+]
+
 module.exports = {
-  entry: './src/index.ts',
+  entry: (items => {
+    const conf = {}
+    items.forEach(item => {
+      conf[item] = `./src/entries/${item}.ts`
+    })
+    
+    return conf
+  })(pages)
+  ,
   mode: 'development',
   devtool: 'source-map',
   optimization: {
@@ -17,6 +31,11 @@ module.exports = {
   output: {
     filename: '[name].[contenthash].js',
     path: path.resolve(__dirname, 'dist')
+  },
+  optimization: {
+    splitChunks: {
+      chunks: "all",
+    },
   },
   module: {
     rules: [
@@ -51,17 +70,20 @@ module.exports = {
   resolve: {
     extensions: ['.tsx', '.ts', '.js']
   },
-  plugins: [
+  plugins: [].concat(
+    pages.map( page => 
+      new HtmlWebpackPlugin({
+        inject: true,
+        template: `./src/pages/${page}.html`,
+        filename: `${page}.html`,
+        chunks: [page],
+      }) ),
     new MiniCssExtractPlugin({
-      // Options similar to the same options in webpackOptions.output
-      // both options are optional
       filename: '[name].[contenthash].css',
       chunkFilename: '[id].css'
     }),
     new CleanWebpackPlugin(),
-    new HtmlWebpackPlugin({
-      template: './src/index.html'
-    }),
+    
     new ForkTsCheckerWebpackPlugin(),
     new CopyPlugin({
       patterns: [{ from: 'src/assets', to: 'assets' }]
@@ -71,5 +93,5 @@ module.exports = {
       exclude: 'node_modules',
       context: 'src'
     })
-  ]
+  )
 };
