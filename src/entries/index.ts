@@ -1,1 +1,1 @@
-
+alert(document.title)

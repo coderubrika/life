@@ -1,0 +1,16 @@
+{
+    "server": {
+        "port": 5000,
+        "host": "localhost",
+        "externalHost": ""
+    },
+
+    "projectSettings": {
+        "pages": [],
+        "rootPath": "",
+        "configPath": "",
+        "srcPath": "",
+        "pagesPath": "",
+        "entriesPath": ""
+    }
+}

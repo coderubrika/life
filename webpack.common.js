@@ -7,11 +7,9 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
 
-const pages = [
-  'index',
-  'Inspector',
-  'Hierarchy'
-]
+const config = require('config');
+
+const pages = 
 
 module.exports = {
   entry: (items => {
