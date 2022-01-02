@@ -15,22 +15,35 @@ import { Rotator } from './App/Components/Rotator';
 import { Ngon } from './Engine/Components/Ngon';
 
 function startAll() {
+
+
+    // это работает по принципу проверил в сторе значение и взял оттуда, иначе начал с нуля
     Entity.init()
+
+    // это работает по принципу игрового цикла, тоесть запускается вместе с игровым циклом и сотрудницает с ним
     Time.init()
 
+    // это просто кнопки
     const $buttonStart = document.querySelector('button#start') 
     const $buttonStop = document.querySelector('button#stop')
+    
+    // это канвас, он мне нужен из специальнього окна
     const $canvas: HTMLCanvasElement = document.querySelector('canvas#canvas')
+    // пока не понятно
     let context: CanvasRenderingContext2D;
 
-
+    // наверное это тоже происходит на старте
     function initEntities(entities: Entity[]) {
 
+        // это как нибудь заранее берется из окна
         context = $canvas.getContext('2d')
 
+        // это дичь с настройками
         context.strokeStyle = '#ffffff'
         context.fillStyle = '#15122b'
-
+        
+        // этот список по идее должен настраиваться из какого нибудь окна, путем перетаскивания
+        // и настройкой параметром тоже из окна
         entities.forEach (entity => {
             entity.AddComponent(new Transform2D ( new Vector2(_.random(0, 1000),_.random(0, 500)), new Angle(90)))
 

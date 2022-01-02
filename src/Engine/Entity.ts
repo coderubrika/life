@@ -11,9 +11,12 @@ export class Entity {
     constructor(name?: string) {
         this.name = name || 'Entity_' + Entity.entityId.toString()
         this.components = {}
+        Entity.entityId += 1
     }
 
     public static init() {
+        console.log('ddddd');
+        
         Entity.entityId = 0
     }
 
