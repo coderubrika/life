@@ -1,6 +1,6 @@
 const path = require('path')
 // see to redux exploration in future
-
+// see to lowdb exploration insted fs-extra for read/write json data in future
 const {readJson, saveJson} = require('./index')
 
 const rootPath = path.resolve(__dirname, '..')  
