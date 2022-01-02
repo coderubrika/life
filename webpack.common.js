@@ -9,7 +9,7 @@ const ESLintPlugin = require('eslint-webpack-plugin');
 
 const config = require('config');
 
-const pages = 
+const pages = config.get('projectSettings.pages')
 
 module.exports = {
   entry: (items => {

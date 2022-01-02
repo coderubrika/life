@@ -1,16 +1,19 @@
 {
-    "server": {
-        "port": 5000,
-        "host": "localhost",
-        "externalHost": ""
-    },
-
-    "projectSettings": {
-        "pages": [],
-        "rootPath": "",
-        "configPath": "",
-        "srcPath": "",
-        "pagesPath": "",
-        "entriesPath": ""
-    }
+	"server": {
+		"port": 5000,
+		"host": "localhost",
+		"externalHost": ""
+	},
+	"projectSettings": {
+		"pages": [
+			"index",
+			"Inspector",
+			"Hierarchy"
+		],
+		"rootPath": "C:\\Users\\Anton\\Documents\\forfun\\life",
+		"configPath": "C:\\Users\\Anton\\Documents\\forfun\\life\\config\\default.json",
+		"srcPath": "C:\\Users\\Anton\\Documents\\forfun\\life\\src",
+		"pagesPath": "C:\\Users\\Anton\\Documents\\forfun\\life\\src\\pages",
+		"entriesPath": "C:\\Users\\Anton\\Documents\\forfun\\life\\src\\entries"
+	}
 }
