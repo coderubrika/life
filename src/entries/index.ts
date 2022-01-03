@@ -1,7 +1,24 @@
+import { ExtraLs } from "../../External/ExtraLocalStorage"
+import StorageDomains from "../Editor/Domains"
 import { Entity } from "../Engine/Entity"
 
 const $openHierarchyBtn = document.querySelector('button#open-hierarchy')
 const $openInspectorBtn = document.querySelector('button#open-inspector')
+
+const extraLs: ExtraLs = new ExtraLs()
+
+extraLs.connectDomain(StorageDomains.EntitiesDomain)
+extraLs.connectDomain(StorageDomains.SelectedDomain)
+
+extraLs.setOnAddedCallback(StorageDomains.EntitiesDomain, (params)=> {
+    console.log(`added: ${params}`)
+    extraLs.commitAnDomain(StorageDomains.EntitiesDomain)
+})
+
+extraLs.setOnRemovedCallback(StorageDomains.EntitiesDomain, (params)=> {
+    console.log(`removed: ${params}`)
+    extraLs.commitAnDomain(StorageDomains.EntitiesDomain)
+})
 
 let $hierarchyWindow: Window, $inspectorWindow: Window
 
