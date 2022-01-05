@@ -49,7 +49,7 @@ module.exports = {
         }
       },
       {
-        test: /\.(scss|css)$/,
+        test: /\.(scss|css|sass)$/,
         use: [
           process.env.NODE_ENV !== 'production'
             ? 'style-loader'

@@ -1,4 +1,6 @@
+import { v4 } from "uuid"
 import { Watcher } from "../Watcher"
+import { StorageConnection } from "./StorageConnection"
 
 interface Domain {
     wasAdded: string,
@@ -14,27 +16,60 @@ export class ExtraLs {
     private localStorage: Storage
     private domains: {[name:string]: Domain}
 
+    private id: string
+
     private static readonly DOMAINS_KEY: string = '__domains__'
+    private static readonly LOCAL_STORAGE_PLACE = '__local_storage_place__'
 
     private watcher: Watcher
 
     constructor() {
+
+        this.id = v4()
+
+        this.login()
+
         this.localStorage = window.localStorage
         this.domains = {}
-        this.watcher = new Watcher(500)
+        this.watcher = new Watcher(50)
         this.watcher.watchCallback = ((ls: ExtraLs)=>{
             return ()=> {                
                 for (let name in ls.domains) {
+                    let handledRemove = false, handledAdd = false
+
                     if (ls.getAddedState(name) && ls.haveOnAddedCallback(name)) {
                         ls.domains[name].onAddedCallback(ls.getAddedIds(name))
+                        handledAdd = true
                     }
                     if (ls.getRemovedState(name) && ls.haveOnRemovedCallback(name)) {
                         ls.domains[name].onRemovedCallback(ls.getRemovedIds(name))
+                        handledRemove = true
+                    }
+                    
+                    if (handledRemove || handledAdd) {
+                        ls.commitAnDomain(name)
+                        /**
+                         *
+                         * кароче как только главный стор полуичит информацию об изменениях
+                         * он добавит всех в список на обновления и даст добро на обновление для всех
+                         * получается все сторы должны зарегистрироваться как сторы, и должны проверять есть ои обновление и есть ли они в списке
+                         * если обновление есть они должны 
+                         */
+                        
                     }
                 }
+                
             }
         })(this)
         this.watcher.watch()
+    }
+
+    private login() {
+        this.AddToIdsStorage(ExtraLs.LOCAL_STORAGE_PLACE, this.id)
+    }
+
+    private logout() {
+        this.RemoveIdsFromStorage(ExtraLs.LOCAL_STORAGE_PLACE, this.id)
     }
 
     public connectDomain(name: string) {
@@ -52,6 +87,8 @@ export class ExtraLs {
         if (!this.hasDomain(name)) {
             this.defineDomain(name)
         }
+
+        return new StorageConnection(name, this)
     }
 
     public defineDomain(name: string) {

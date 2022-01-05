@@ -1,21 +1,24 @@
 import { v4 } from "uuid"
 import { ExtraLs } from "../../External/ExtraLocalStorage"
+import { StorageConnection } from "../../External/ExtraLocalStorage/StorageConnection"
 import StorageDomains from "../Editor/Domains"
+import { SelectEntity } from "../Editor/Select"
 import { Entity } from "../Engine/Entity"
 import '../style/styles.scss'
 
-class Select {
-    public pointerId: string
+import * as React from "react";
+import * as ReactDOM from "react-dom";
+import App from "../React/Hierarcy/App"
 
-    constructor(pointerId: string) {
-        this.pointerId = pointerId
-    }
-}
+const $root = document.getElementById('root-react')
+
+ReactDOM.render(React.createElement(App), $root)
+
 
 const extraLs: ExtraLs = new ExtraLs()
 
-extraLs.connectDomain(StorageDomains.EntitiesDomain)
-extraLs.connectDomain(StorageDomains.SelectedDomain)
+const entitiesConnection: StorageConnection = extraLs.connectDomain(StorageDomains.EntitiesDomain)
+const selectConnection: StorageConnection = extraLs.connectDomain(StorageDomains.SelectedDomain)
 
 const $createBtn = document.querySelector('button#create')
 const $deleteBtn = document.querySelector('button#delete')
@@ -25,7 +28,7 @@ const $enitiesList = document.querySelector('ul#enities-list')
 let entities: Entity[] = []
 
 let $selected: HTMLElement
-let select: Select
+let select: SelectEntity
 
 Entity.init()
 
@@ -44,25 +47,23 @@ $createBtn.addEventListener('click', ()=> {
             $selected.classList.remove('selected')
             // отменить селект
             if (select) {
-                extraLs.removeFromDomainById(StorageDomains.SelectedDomain, select.pointerId)
+                selectConnection.remove(select.id)
                 select = null
             }
         }
 
         $selected = $li
         $selected.classList.add('selected')
-        window.dispatchEvent(new CustomEvent<Entity>('select', {detail: entity}))
         // назначить селект
 
-        select = new Select(entity.id)
-        extraLs.setToDomainById(StorageDomains.SelectedDomain, select.pointerId, select)
+        select = new SelectEntity(entity.id)
+        selectConnection.add(select.id, select)
     })
 
     $li.textContent = entity.name
     $li.dataset.entityId = entity.id
 
-    window.dispatchEvent(new CustomEvent<Entity>('create', {detail: entity} ))
-    extraLs.setToDomainById(StorageDomains.EntitiesDomain, entity.id, entity)
+    entitiesConnection.add(entity.id, entity)
 
     $enitiesList.append($li)
 
@@ -70,10 +71,8 @@ $createBtn.addEventListener('click', ()=> {
         $selected = $enitiesList.querySelector(':first-child')
         // назначить селект
 
-        select = new Select(entity.id)
-        extraLs.setToDomainById(StorageDomains.SelectedDomain, select.pointerId, select)
-
-        window.dispatchEvent(new CustomEvent<Entity>('select', {detail: entity}))
+        select = new SelectEntity(entity.id)
+        selectConnection.add(select.id, select)
 
         $selected.classList.add('selected')
     }
@@ -86,22 +85,20 @@ $deleteBtn.addEventListener('click', ()=> {
 
     entities = entities.filter(entity => entity != finded)
 
-    window.dispatchEvent(new CustomEvent<Entity>('remove', {detail: finded} ))
-    extraLs.removeFromDomainById(StorageDomains.EntitiesDomain, finded.id)
+    entitiesConnection.remove(finded.id)
 
     $selected.remove()
     // отменить селект
-    extraLs.removeFromDomainById(StorageDomains.SelectedDomain, select.pointerId)
+    selectConnection.remove(select.id)
     select = null
 
     $selected = $enitiesList.querySelector(':first-child')
     if ($selected) {
 
-        window.dispatchEvent(new CustomEvent<Entity>('remove', {detail: entities[0]} ))
         $selected.classList.add('selected')
         // назначить селект
-        select = new Select(entities[0].id)
-        extraLs.setToDomainById(StorageDomains.SelectedDomain, select.pointerId, select)
+        select = new SelectEntity(entities[0].id)
+        selectConnection.add(select.id, select)
     }
     
     

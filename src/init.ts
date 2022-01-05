@@ -14,8 +14,25 @@ import { Time } from './Engine/DeltaTime';
 import { Rotator } from './App/Components/Rotator';
 import { Ngon } from './Engine/Components/Ngon';
 
-function startAll() {
+export function startAll() {
 
+    const $body = document.body
+    const $startBtn: HTMLButtonElement = document.createElement('button')
+    const $stopBtn: HTMLButtonElement = document.createElement('button')
+    const $canvas: HTMLCanvasElement = document.createElement('canvas')
+
+    const canvasWidth = 800
+    const canvasHeight = 500
+
+    $startBtn.id = 'start'
+    $startBtn.textContent = 'Start'
+    $stopBtn.id = 'stop'
+    $stopBtn.textContent = 'Stop'
+    $canvas.id = 'canvas'
+    $canvas.height = canvasHeight
+    $canvas.width = canvasWidth
+
+    $body.append($startBtn, $stopBtn, $canvas)
 
     // это работает по принципу проверил в сторе значение и взял оттуда, иначе начал с нуля
     Entity.init()
@@ -23,13 +40,6 @@ function startAll() {
     // это работает по принципу игрового цикла, тоесть запускается вместе с игровым циклом и сотрудницает с ним
     Time.init()
 
-    // это просто кнопки
-    const $buttonStart = document.querySelector('button#start') 
-    const $buttonStop = document.querySelector('button#stop')
-    
-    // это канвас, он мне нужен из специальнього окна
-    const $canvas: HTMLCanvasElement = document.querySelector('canvas#canvas')
-    // пока не понятно
     let context: CanvasRenderingContext2D;
 
     // наверное это тоже происходит на старте
@@ -47,10 +57,10 @@ function startAll() {
         entities.forEach (entity => {
             entity.AddComponent(new Transform2D ( new Vector2(_.random(0, 1000),_.random(0, 500)), new Angle(90)))
 
-            const count = _.random(1, 5);
+            const count = _.random(1, 1);
 
             for (let i = 0; i < count; i++) {
-                entity.AddComponent(new Ngon(_.random(3, 50), _.random(3, 10)))    
+                entity.AddComponent(new Ngon(_.random(2, 6), _.random(3, 6)))    
             }
 
             entity.AddComponent(new Renderer(context)),
@@ -62,7 +72,7 @@ function startAll() {
 
     const items: Entity[] = []
 
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 1000; i++) {
         items.push(new Entity())
     }
 
@@ -75,7 +85,7 @@ function startAll() {
 
     function tick() {
         Time.tickQuery()
-        context.fillRect(0, 0, 2000, 2000)
+        context.fillRect(0, 0, canvasWidth, canvasHeight)
 
         items.forEach(item => {
             const components = item.GetComponents(Object)
@@ -96,7 +106,7 @@ function startAll() {
 
     let timerId: NodeJS.Timer = null;
 
-    $buttonStart.addEventListener('click', ()=> {
+    $startBtn.addEventListener('click', ()=> {
         items.forEach(item => {
             const components = item.GetComponents(Object)
 
@@ -108,10 +118,9 @@ function startAll() {
         timerId = setInterval(tick, deltaTime)
     })
 
-    $buttonStop.addEventListener('click', ()=> {
+    $stopBtn.addEventListener('click', ()=> {
         if (timerId) {
             clearInterval(timerId)
-            context.clearRect(0, 0, 2000, 2000)
         }
         
     })
